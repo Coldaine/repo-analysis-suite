@@ -85,7 +85,30 @@ python gradio_app.py  # Dashboard at http://localhost:7860
 
 ---
 
-### 4. **observability-control-plane** (`observability-control-plane/`)
+### 4. **agent-council** (`agent-council/`)
+
+Multi-agent orchestration system design documentation for coordinating Gemini, Jules, Qwen, and Goose in autonomous development workflows.
+
+- **Purpose**: Architecture and design for timer-based agent coordination
+- **Tech Stack**: Python (design only, not implemented)
+- **Key Features**:
+  - Timer-based scheduling (round-robin execution)
+  - Persistent state management with shared memory
+  - Multi-agent coordination patterns
+  - Platform-agnostic design
+  - Comprehensive architecture documentation
+- **Status**: 📋 Documentation only (no code implementation)
+- **Note**: Architecture docs for an unimplemented system, valuable as reference
+
+**Agent Roster** (proposed):
+- **Gemini**: Reviewer (every 10 min) - progress reviews, architecture decisions
+- **Jules**: Developer (every 60 min) - code implementation, features
+- **Qwen**: Analyst (every 30 min) - code quality, documentation
+- **Goose**: Executor (every 15 min) - commands, tests, deployment
+
+---
+
+### 5. **observability-control-plane** (`observability-control-plane/`)
 
 Autonomous observability infrastructure management using LLM agents, Dagger orchestration, and distributed memory.
 
@@ -113,10 +136,11 @@ Autonomous observability infrastructure management using LLM agents, Dagger orch
 
 ### Current State
 
-This monorepo was created by consolidating 4 standalone repositories that share a common theme: **AI-powered development tooling and observability**. As of 2026-01-13:
+This monorepo was created by consolidating 5 standalone repositories that share a common theme: **AI-powered development tooling and observability**. As of 2026-01-13:
 
 - **AgentReview** and **repo-analysis-system** are actively used and maintained
 - **mcp-monitoring-interface** is a functional prototype from a hackathon
+- **agent-council** is architecture documentation (never implemented)
 - **observability-control-plane** is an ambitious design that was never deployed
 
 ### Going Forward
@@ -179,6 +203,7 @@ repo-analysis-suite/
 ├── AgentReview/              # PR review with multi-agent orchestration
 ├── repo-analysis-system/     # Portfolio health monitoring
 ├── mcp-monitoring-interface/ # MCP protocol observability
+├── agent-council/            # Multi-agent orchestration design docs
 ├── observability-control-plane/ # Self-healing infrastructure (unused)
 ├── README.md                 # This file
 └── ROADMAP.md                # Consolidation plan (TODO)
@@ -224,8 +249,9 @@ python <entrypoint>
 | AgentReview | 11,562 | 62 | 2026-01-13 | ✅ Active |
 | repo-analysis-system | 8,474 | 18 | 2026-01-13 | ✅ Active |
 | mcp-monitoring-interface | 1,847 | 2 | 2025-11-11 | ⚠️ Prototype |
+| agent-council | 3,310 | 1 | 2025-11-20 | 📋 Docs only |
 | observability-control-plane | 3,427 | 1 | 2025-11-24 | 🚧 Unused |
-| **Total** | **25,310** | **83** | - | - |
+| **Total** | **28,620** | **84** | - | - |
 
 ---
 
