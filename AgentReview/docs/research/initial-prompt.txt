@@ -1,0 +1,234 @@
+Perfect. Here's the comprehensive prompt for the agent:
+
+***
+
+# **Documentation Generation Prompt**
+
+You are a senior technical writer and software architect. You've been given the complete conversation history about designing a **multi-agent PR review system using LangGraph**. Your task is to unpack this conversation into comprehensive, production-ready documentation following the user's established documentation standards.
+
+## **Context About the User's Documentation Preferences**
+
+From the user's history, they prefer:
+- **Rich, tile-based documentation** with tags, metadata, and hierarchical structure
+- **`/docs` folder** as the primary location for most documentation
+- **Separate architecture documents** for system design
+- **Detailed, actionable guidance** with real implementation details (not vague overviews)
+- **Visual hierarchy** with bold typography, callouts, and structured sections
+- **Code-first documentation** with working examples, not just theory
+
+## **The System Being Documented**
+
+This conversation designed a **self-hosted, multi-agent PR review system** with the following key components:
+
+### **Architecture Overview**
+1. **Orchestrator** (CEO/Product Manager) - Plans review strategy, spawns agents, manages rounds
+2. **Review Agents** (Senior Engineers) - Specialized reviewers (alignment, dependencies, testing, security)
+3. **Context Agents** (Junior Engineers) - Disposable, cheap agents that gather context (Zoekt, LSP, Git)
+4. **Workflow Agent** (DevOps/Infrastructure) - Singleton that handles CI/tests/shared resources
+5. **Agent Factory** - Dynamic agent composition from templates with model pools
+6. **Memory System** - Durable learning across PRs
+7. **Self-Hosted Observability** - Langfuse, Prometheus, Grafana stack
+
+### **Key Design Decisions**
+- **Multi-round reviews**: 1-3 rounds based on PR complexity (review → heal → deep heal)
+- **Fan-out/fan-in pattern**: Orchestrator spawns agents in parallel, collects results
+- **Persistent review agents**: Context accumulates across iterations (never reset)
+- **Model pools**: Simple mode (fixed models) vs Advanced mode (random/best-available from pool)
+- **Workflow queue**: Deduplicates CI/test requests from multiple agents
+- **Pydantic-based state**: Type safety, validation, serialization
+- **Factory pattern**: Agents composed on-the-fly from templates
+- **Comprehensive storage**: Capture everything, figure out usage later
+
+### **Testing Strategy**
+- **7 integration tests**: E2E workflows with real LLM calls (z.ai budget)
+- **Factory unit tests**: Tool integration, node creation, subgraph compilation, state type safety
+- **Properly scoped tests**: Integration tests validate system behavior, unit tests validate foundation
+
+### **Technology Stack**
+- **LangGraph** (orchestration framework)
+- **Pydantic 2.9+** (type safety, validation)
+- **PostgreSQL** (checkpointing, storage)
+- **Redis** (caching, queues)
+- **Langfuse** (self-hosted tracing)
+- **Prometheus + Grafana + Tempo + Loki** (observability)
+- **MCP** (Model Context Protocol for tools)
+- **GitHub API** (PR interaction)
+
+***
+
+## **Your Task**
+
+Generate the following documentation structure in **Markdown format**:
+
+### **1. `/docs/README.md` - Project Overview**
+
+Create a comprehensive README that includes:
+- **Project title and tagline**
+- **What problem this solves** (1 paragraph)
+- **High-level architecture diagram** (ASCII or Mermaid)
+- **Key features** (bulleted list)
+- **Quick start guide** (5 steps to run locally)
+- **Link tree** to other docs
+
+### **2. `/docs/architecture/SYSTEM_DESIGN.md` - Architecture Deep Dive**
+
+Document the complete system architecture:
+- **System overview** with visual diagram
+- **Agent hierarchy** (orchestrator → review agents → context agents → workflow agent)
+- **State management** (Pydantic models, checkpointing, persistence)
+- **Multi-round workflow** (review → heal → deep heal phases)
+- **Fan-out/fan-in orchestration pattern**
+- **Memory system** (cross-PR learning)
+- **Design decisions and tradeoffs**
+
+### **3. `/docs/architecture/AGENT_FACTORY.md` - Agent Factory & Tool Composition**
+
+Document the agent factory system:
+- **Factory pattern overview**
+- **Agent templates** (review agents vs context agents)
+- **Model pool system** (simple vs advanced mode)
+- **Dynamic node creation**
+- **Subgraph compilation**
+- **Tool integration** (MCP Zoekt, LSP, Git)
+- **State type safety with Pydantic**
+
+### **4. `/docs/architecture/STATE_MANAGEMENT.md` - State & Persistence**
+
+Document state management:
+- **State schemas** (PRReviewState, ReviewAgentState, ContextAgentState)
+- **State accumulation** (operator.add for context/findings)
+- **Checkpoint strategy** (PostgreSQL)
+- **Context caching** (Redis)
+- **Workflow queue** (deduplication)
+- **Serialization with Pydantic**
+
+### **5. `/docs/guides/TESTING.md` - Testing Strategy**
+
+Document the testing approach:
+- **Testing philosophy** (integration > unit, real LLM calls)
+- **7 integration tests** (E2E simple review, complex multi-round, etc.)
+- **Factory unit tests** (tool integration, node creation, etc.)
+- **Success criteria table**
+- **How to run tests**
+
+### **6. `/docs/guides/OBSERVABILITY.md` - Observability & Monitoring**
+
+Document the self-hosted observability stack:
+- **Stack overview** (Langfuse, Prometheus, Grafana, Tempo, Loki)
+- **Docker Compose setup**
+- **Integration with code** (ObservabilityConfig class)
+- **Custom metrics** (agent spawns, costs, latency)
+- **Dashboards** (agent performance, cost analytics, review quality)
+- **Alerting** (error rates, cost spikes, slow reviews)
+
+### **7. `/docs/guides/CONFIGURATION.md` - Configuration Management**
+
+Document configuration with Pydantic Settings:
+- **Settings classes** (ObservabilitySettings, DatabaseSettings, ModelSettings)
+- **Environment variables**
+- **Simple vs advanced mode**
+- **Model pools configuration**
+- **Secrets management**
+
+### **8. `/docs/reference/API.md` - API Reference**
+
+Document the main APIs:
+- **PRReviewOrchestrator** class methods
+- **AgentFactory** class methods
+- **State schemas** (Pydantic models)
+- **Configuration classes**
+- **Example usage code**
+
+### **9. `/docs/development/SETUP.md` - Development Environment**
+
+Document how to set up dev environment:
+- **Prerequisites** (Python 3.11+, Docker, MCP servers)
+- **Installation steps**
+- **Running locally**
+- **Environment variables**
+- **Docker Compose for observability stack**
+
+### **10. `/docs/development/CONTRIBUTING.md` - Contributing Guide**
+
+Create basic contributing guidelines:
+- **Code style** (Black, Ruff, MyPy)
+- **Testing requirements**
+- **PR process**
+- **Documentation requirements**
+
+***
+
+## **Documentation Style Guidelines**
+
+Follow these style principles:
+
+### **Formatting**
+- Use **## for main sections### for subsections
+- **Bold** for important concepts on first mention
+- `Code blocks` with syntax highlighting (```python, ```
+- **Tables** for comparisons, specifications, success criteria
+- **Callout blocks** for warnings, tips, notes (use markdown quotes with emoji)
+
+### **Structure**
+- Start each doc with **1-2 sentence summary** at top
+- Include **table of contents** for docs > 500 words
+- **Code examples before theory** - show working code first
+- **Progressive disclosure** - simple → advanced
+- **Link between docs** extensively
+
+### **Tone**
+- **Technical but clear** - assume reader is experienced developer
+- **Actionable** - tell them what to do, not just what exists
+- **No fluff** - every sentence should add value
+- **Examples-driven** - show, don't just tell
+
+### **Code Examples**
+- **Complete, runnable code** - not pseudo-code
+- **Include imports**
+- **Show actual output** where helpful
+- **Comment non-obvious parts**
+
+***
+
+## **Special Instructions**
+
+1. **Extract all key design decisions** from the conversation into architecture docs
+2. **Include all the test names and descriptions** from the testing strategy discussion
+3. **Preserve the exact technology stack** mentioned (Langfuse, not LangSmith hosting)
+4. **Include the model pool definitions** (cheap_coding, expensive_coding, etc.)
+5. **Document the workflow queue pattern** for singleton workflow agent
+6. **Show the Pydantic state models** with validation
+7. **Include Docker Compose setup** for observability
+8. **Capture the multi-round healing workflow** (review → heal → deep heal)
+9. **Document A/B testing capability** in memory system
+10. **Include cost tracking** throughout
+
+***
+
+## **Deliverable Format**
+
+Provide:
+1. **Complete markdown files** for all 10 documents listed above
+2. **File tree structure** showing where each file goes
+3. **A root-level README.md** that links to all the docs
+
+Each document should be:
+- **Production-ready** (no TODOs or placeholders)
+- **Self-contained** (can be read independently)
+- **Cross-referenced** (links to related docs)
+- **Code-complete** (all examples runnable)
+
+***
+
+## **Success Criteria**
+
+Your documentation is successful if:
+- A new developer can **set up the system in < 30 minutes**
+- An experienced developer can **understand the architecture in < 15 minutes**
+- The testing strategy is **immediately actionable**
+- Configuration is **copy-paste ready**
+- The observability stack **deploys with one command**
+
+***
+
+**Begin generating the documentation now. Start with the file tree structure, then create each document in full.**

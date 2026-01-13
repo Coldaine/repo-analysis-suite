@@ -1,0 +1,7 @@
+flask>=3.0.0
+flask-htmx>=0.3.0
+httpx>=0.27.0
+memori>=0.3.1
+py2neo>=2021.2.0
+psycopg2-binary>=2.9.0
+psutil>=5.9.0

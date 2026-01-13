@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Observability Control Plane</title>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <style>
+    body { font-family: monospace; margin: 2rem; background: #1e1e1e; color: #d4d4d4; }
+    h1 { color: #4ec9b0; }
+    h2 { color: #569cd6; border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+    section { margin: 2rem 0; }
+    pre { background: #2d2d2d; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <h1>Observability Control Plane</h1>
+
+  <section>
+    <h2>Last Check</h2>
+    <pre>{{ last_check }}</pre>
+  </section>
+
+  <section>
+    <h2>Recent Fixes</h2>
+    {% if recent_fixes %}
+      <ul>
+        {% for fix in recent_fixes %}
+          <li><pre>{{ fix }}</pre></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No recent fixes recorded.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>Disk Usage (/)</h2>
+    <pre>{{ disk_usage }}</pre>
+  </section>
+
+  <section>
+    <h2>Agents</h2>
+    {% if agents %}
+      <ul>
+        {% for agent in agents %}
+          <li>{{ agent }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No agents registered.</p>
+    {% endif %}
+  </section>
+</body>
+</html>

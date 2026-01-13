@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # === PROMETHEUS (Metrics) ===
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/config.yml:/etc/prometheus/config.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - agentreview
+
+  # === GRAFANA (Visualization) ===
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+
+  # === TEMPO (Tracing) ===
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      - "8080:8080"
+    environment:
+      TEMPO_RECEIVER_OTLP_ENABLED: "true"
+      TEMPO_STORAGE: filesystem
+      TEMPO_OBJECT_STORAGE_LOCALFILESYS_TEMPPATH: ./tempo/traces
+
+  # === LOKI (Logging) ===
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "12345:9095"
+    environment:
+      - SERVICES=web,ingester,later
+
+  # === BASIC STACK START ===
+  prometheus_node:
+    image: prom/prometheus:latest
+    ports:
+      - "9091:9090"
+    environment:
+      PROMETHEUS_CLIENT: true
+    command:
+      - --store.agentreview
+      - --collect.agentreview
+
+  redis_exporter:
+    image: oliver006/redis_exporter:latest
+    ports:
+      - "9121:9121"
+    depends_on:
+      - redis

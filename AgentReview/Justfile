@@ -1,0 +1,66 @@
+# AgentReview Development Commands
+# Install 'just' command runner: https://github.com/casey/just
+
+# Default recipe to display help information
+default:
+    @just --list
+
+# Install dependencies and setup environment
+install:
+    uv sync
+    @echo "✓ Dependencies installed"
+    @echo "Run 'just check' to verify configuration"
+
+# Verify environment configuration
+check:
+    uv run python -m multiagentpanic check
+
+# Run tests
+test:
+    uv run pytest tests/ -v
+
+# Run tests with coverage
+test-cov:
+    uv run pytest tests/ --cov=src/multiagentpanic --cov-report=html --cov-report=term
+
+# Format code with ruff
+format:
+    uv run ruff format src/ tests/
+    @echo "✓ Code formatted"
+
+# Lint code with ruff
+lint:
+    uv run ruff check src/ tests/
+
+# Fix linting issues automatically
+fix:
+    uv run ruff check --fix src/ tests/
+
+# Type check with mypy
+typecheck:
+    uv run mypy src/
+
+# Run all checks (lint, typecheck, test)
+ci: lint typecheck test
+
+# Clean build artifacts and caches
+clean:
+    rm -rf build/ dist/ *.egg-info .pytest_cache .coverage htmlcov/ .mypy_cache/ .ruff_cache/
+    find . -type d -name __pycache__ -exec rm -rf {} +
+    @echo "✓ Cleaned build artifacts"
+
+# Start observability stack (Langfuse, Prometheus, Grafana)
+obs-up:
+    docker-compose -f docker-compose.observability.yml up -d
+    @echo "✓ Observability stack started"
+    @echo "  Langfuse: http://localhost:3000"
+    @echo "  Grafana: http://localhost:3001"
+
+# Stop observability stack
+obs-down:
+    docker-compose -f docker-compose.observability.yml down
+
+# Copy .env.example to .env if it doesn't exist
+env:
+    @test -f .env || (cp .env.example .env && echo "✓ Created .env from .env.example")
+    @test -f .env && echo "✓ .env file exists"

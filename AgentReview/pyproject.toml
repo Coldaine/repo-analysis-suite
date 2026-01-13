@@ -1,0 +1,71 @@
+[project]
+name = "multiagentpanic"
+version = "0.1.0"
+description = "Multi-agent PR review system built on LangGraph"
+authors = [{name = "MultiagentPanic Developer", email = "developer@multiagentpanic.com"}]
+requires-python = ">=3.11"
+
+dependencies = [
+    # === CORE FRAMEWORK ===
+    "langgraph>=1.0.5",
+    "langchain>=1.2.0",
+    "langchain-core>=1.2.5",
+    
+    # === PYDANTIC (CRITICAL) ===
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.12.0",  # For config management
+    
+    # === STATE MANAGEMENT ===
+    "psycopg[binary,pool]>=3.3.2",  # PostgreSQL for checkpointing
+    "redis>=7.1.0",  # For caching, queue
+    "databases[postgresql]>=0.9.0",  # Async DB access
+    
+    # === OBSERVABILITY (Self-Hosted) ===
+    "langfuse>=3.10.5",  # Self-hosted tracing
+    "opentelemetry-api>=1.39.1",
+    "opentelemetry-sdk>=1.39.1",
+    "opentelemetry-exporter-otlp>=1.39.1",
+    "prometheus-client>=0.23.1",
+    "structlog>=25.5.0",
+    
+    # === MCP INTEGRATION ===
+    "mcp>=1.23.3",  # Model Context Protocol client
+    "langchain-mcp-adapters>=0.2.1",  # LangChain MCP tool integration
+    
+    # === STATE MANAGEMENT (continued) ===
+    "langgraph-checkpoint-postgres>=3.0.2",  # PostgreSQL checkpointing for LangGraph
+    "langgraph-checkpoint-sqlite>=3.0.1",    # SQLite checkpointing (dev/test)
+    
+    # === LLM PROVIDERS ===
+    "openai>=2.11.0",  # For z.ai, OpenAI, etc
+    "anthropic>=0.75.0",  # Claude
+    "google-generativeai>=0.8.5",  # Gemini
+    "langchain-openai>=1.1.6",
+    "langchain-anthropic>=0.3.1",
+    "langchain-google-genai>=2.0.7",
+    
+    # === GITHUB INTEGRATION ===
+    "PyGithub>=2.8.1",  # GitHub API
+    
+    # === UTILITIES ===
+    "python-dotenv>=1.2.1",
+    "tenacity>=9.1.2",  # Retry logic
+    "aiohttp>=3.13.2",
+    "httpx>=0.28.1",
+    "rich>=14.2.0",  # CLI output
+    "typer>=0.20.0",  # CLI commands
+]
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
+    "black>=24.8.0",
+    "ruff>=0.7.0",
+    "mypy>=1.13.0",
+    "ipython>=8.28.0",
+]

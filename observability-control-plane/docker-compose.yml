@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  mcp:
+    image: ghcr.io/aws/aws-mcp-server:latest
+    ports:
+      - "8433:8433"
+    environment:
+      - ALLOWED_TOOLS=docker,github,filesystem,postgres,neo4j,ntfy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_PASSWORD=${MEMORI_DB_PASSWORD:?MEMORI_DB_PASSWORD not set}
+      - POSTGRES_USER=${MEMORI_DB_USER:-memori}
+      - POSTGRES_DB=${MEMORI_DB_NAME:-memori}
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${MEMORI_DB_USER:-memori}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  memori:
+    image: ghcr.io/gibson-ai/memori:latest
+    environment:
+      - DATABASE_URL=postgresql://${MEMORI_DB_USER:-memori}:${MEMORI_DB_PASSWORD}@${MEMORI_DB_HOST:-postgres}:${MEMORI_DB_PORT:-5432}/${MEMORI_DB_NAME:-memori}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  neo4j:
+    image: neo4j:5.24
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:?NEO4J_PASSWORD not set}
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./neo4j-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p ${NEO4J_PASSWORD} 'RETURN 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "${DASHBOARD_PORT:-5555}:5555"
+    environment:
+      - DATABASE_URL=postgresql://${MEMORI_DB_USER:-memori}:${MEMORI_DB_PASSWORD}@${MEMORI_DB_HOST:-postgres}:${MEMORI_DB_PORT:-5432}/${MEMORI_DB_NAME:-memori}
+      - NEO4J_URI=${NEO4J_URI:-bolt://neo4j:7687}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - MCP_URL=${MCP_URL:-http://mcp:8433}
+    depends_on:
+      memori:
+        condition: service_started
+      neo4j:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
